@@ -1,13 +1,41 @@
-// Demo page showing tenant (organization) context
-
-export function OrganizationsPage() {
+import { Membership } from "../../../api/client";
+export function OrganizationsPage({
+  memberships,
+  current,
+  disabled,
+  onChange,
+}: {
+  memberships: Membership[];
+  current: string;
+  disabled: boolean;
+  onChange: (id: string) => void;
+}) {
+  const selected = memberships.find((m) => m.organization.id === current);
   return (
-    <div>
-      <h2 className="text-xl mb-4">Current Organization</h2>
-      <p>In a real app, this would show the list of organizations the user belongs to and allow switching.</p>
-      <div className="mt-4 p-4 border rounded bg-white">
-        <strong>Active Tenant:</strong> demo-org
+    <section className="organization-bar" aria-label="Organization selection">
+      <label>
+        Active organization
+        <select
+          aria-label="Active organization"
+          value={current}
+          disabled={disabled}
+          onChange={(event) => onChange(event.target.value)}
+        >
+          {memberships.map((member) => (
+            <option key={member.organization.id} value={member.organization.id}>
+              {member.organization.name}
+            </option>
+          ))}
+        </select>
+      </label>
+      <div>
+        <span className="badge">{selected?.role || "NO MEMBERSHIP"}</span>
+        <p>
+          {selected?.role === "MEMBER"
+            ? "You can review projects and manage their tasks."
+            : "You can manage projects and their tasks."}
+        </p>
       </div>
-    </div>
+    </section>
   );
 }

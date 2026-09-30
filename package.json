@@ -1,0 +1,19 @@
+{
+  "name": "tenant-workspace-learning",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "build": "npm run build --workspace backend && npm run build --workspace frontend",
+    "test": "node scripts/test-database.mjs backend",
+    "typecheck": "npm run typecheck --workspaces",
+    "db:generate": "npm run prisma:generate --workspace backend",
+    "db:deploy": "npm run prisma:deploy --workspace backend",
+    "verify": "node scripts/test-database.mjs verify",
+    "test:browser": "node scripts/test-database.mjs browser",
+    "setup:local": "node scripts/setup-local.mjs"
+  }
+}

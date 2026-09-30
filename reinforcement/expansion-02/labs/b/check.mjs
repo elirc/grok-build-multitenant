@@ -1,0 +1,10 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+const subject = await import(process.argv.includes('--reference') ? '../../_answers/b.mjs' : './exercise.mjs');
+const {update:u}=subject;const base=()=>[{id:'A',version:3,name:'Old',description:'D'},{id:'B',version:1,name:'B',description:''}];
+test('accepted update increments and preserves omitted fields',()=>{const r=u(base(),{id:'A',expectedVersion:3,patch:{name:'New'}});assert.deepEqual(r.rows[0],{id:'A',version:4,name:'New',description:'D'});});
+test('stale write conflicts',()=>{const a=u(base(),{id:'A',expectedVersion:3,patch:{name:'X'}});assert.equal(u(a.rows,{id:'A',expectedVersion:3,patch:{name:'Y'}}).status,'conflict');});
+test('missing keeps original collection',()=>{const b=base();assert.equal(u(b,{id:'X',expectedVersion:1,patch:{}}).rows,b);});
+test('forbidden keys and types rejected before lookup',()=>{for(const patch of [{version:8},{name:null}])assert.throws(()=>u([],{id:'X',expectedVersion:1,patch}),TypeError);});
+test('empty accepted patch still increments',()=>assert.equal(u(base(),{id:'A',expectedVersion:3,patch:{}}).rows[0].version,4));
+test('frozen input and unrelated record are preserved',()=>{const b=Object.freeze(base().map(Object.freeze));assert.equal(u(b,{id:'A',expectedVersion:3,patch:{name:'X'}}).rows[1],b[1]);});

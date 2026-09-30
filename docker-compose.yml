@@ -1,16 +1,18 @@
-version: '3.8'
-
 services:
   postgres:
     image: postgres:16
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: grokbuildmultitenant
+      POSTGRES_USER: tenant_dev
+      POSTGRES_PASSWORD: ${TENANT_POSTGRES_PASSWORD:?Set a local database password}
+      POSTGRES_DB: tenant_workspace
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5437:5432"
     volumes:
       - postgres_data_mt:/var/lib/postgresql/data
-
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tenant_dev -d tenant_workspace"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
 volumes:
   postgres_data_mt:

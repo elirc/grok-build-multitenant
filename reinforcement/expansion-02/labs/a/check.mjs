@@ -1,0 +1,10 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+const subject = await import(process.argv.includes('--reference') ? '../../_answers/a.mjs' : './exercise.mjs');
+const {decide:d}=subject;
+test('requires context',()=>assert.deepEqual(d(null,'A','read'),{allowed:false,reason:'unauthenticated'}));
+test('scope applies even to owner',()=>assert.equal(d({role:'OWNER',organizationId:'A'},'B','read').reason,'scope'));
+test('member task write differs from project write',()=>{const c={role:'MEMBER',organizationId:'A'};assert.equal(d(c,'A','writeTask').allowed,true);assert.equal(d(c,'A','writeProject').allowed,false);});
+test('admin and owner can change projects',()=>{for(const role of ['ADMIN','OWNER'])assert.equal(d({role,organizationId:'A'},'A','writeProject').allowed,true);});
+test('unknown role and action fail closed',()=>{assert.equal(d({role:'toString',organizationId:'A'},'A','read').allowed,false);assert.equal(d({role:'OWNER',organizationId:'A'},'A','deleteEverything').allowed,false);});
+test('frozen context stays intact',()=>assert.equal(d(Object.freeze({role:'MEMBER',organizationId:'A'}),'A','read').allowed,true));

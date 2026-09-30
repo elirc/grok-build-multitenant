@@ -1,3 +1,5 @@
+> Historical starter notes. The implemented behavior, setup, and current learning path are documented in [README.md](README.md) and [astraupskill](astraupskill/README.md). Planned features below are not completion claims.
+
 # SWE Thought Process Journal - grokbuildmultitenantproject
 
 This journal explains the reasoning behind building this Multi-Tenant SaaS starter.

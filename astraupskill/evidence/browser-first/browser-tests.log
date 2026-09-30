@@ -1,0 +1,72 @@
+
+Running 10 tests using 1 worker
+
+  ok  1 browser-tests\workspace.spec.mjs:55:1 › organization changes keep only the selected workspace and tokens stay in memory (6.0s)
+  ok  2 browser-tests\workspace.spec.mjs:81:1 › project CRUD keeps identity and confirms deletion (6.0s)
+  x   3 browser-tests\workspace.spec.mjs:125:1 › members can manage tasks but do not receive project mutation controls (45.4s)
+  ok  4 browser-tests\workspace.spec.mjs:155:1 › two project editors preserve the stale draft and export its baseline (11.5s)
+  ok  5 browser-tests\workspace.spec.mjs:199:1 › two task editors cannot overwrite the accepted task (10.7s)
+  ok  6 browser-tests\workspace.spec.mjs:246:1 › tenant switching and sign-out require explicit draft discard (4.0s)
+  ok  7 browser-tests\workspace.spec.mjs:277:1 › failed saves preserve input and successful saves remain accepted after refresh failure (4.3s)
+  ok  8 browser-tests\workspace.spec.mjs:310:1 › project deletion with tasks explains the required explicit cleanup (4.3s)
+  ok  9 browser-tests\workspace.spec.mjs:330:1 › literal project titles and search do not inject HTML (2.6s)
+  ok 10 browser-tests\workspace.spec.mjs:345:1 › desktop and narrow project/task layouts remain readable (5.7s)
+
+
+  1) browser-tests\workspace.spec.mjs:125:1 › members can manage tasks but do not receive project mutation controls 
+
+    [31mTest timeout of 45000ms exceeded.[39m
+
+    Error: locator.selectOption: Test timeout of 45000ms exceeded.
+    Call log:
+    [2m  - waiting for getByLabel('Task status', { exact: true })[22m
+
+
+      140 |   await page.getByRole("button", { name: "Save task", exact: true }).click();
+      141 |   await accepted(page, "Task saved at version 1");
+    > 142 |   await page.getByLabel("Task status", { exact: true }).selectOption("DONE");
+          |                                                         ^
+      143 |   await page.getByRole("button", { name: "Save task", exact: true }).click();
+      144 |   await accepted(page, "Task saved at version 2");
+      145 |   page.once("dialog", (d) => d.dismiss());
+        at C:\Users\Owner\Desktop\AstraOrganized2\astra-remaining-improvements\stage\01e135926859\browser-tests\workspace.spec.mjs:142:57
+
+    Error Context: test-results\workspace-members-can-mana-c65c7-e-project-mutation-controls\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\workspace-members-can-mana-c65c7-e-project-mutation-controls\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\workspace-members-can-mana-c65c7-e-project-mutation-controls\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    browser-tests\workspace.spec.mjs:125:1 › members can manage tasks but do not receive project mutation controls 
+  9 passed (2.3m)
+[2m[WebServer] [22m(node:35532) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+[2m[WebServer] [22m(node:11892) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+(node:33412) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:33412) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:20196) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:20196) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+Command failed: C:\Program Files\nodejs\node.exe C:\Users\Owner\Desktop\AstraOrganized2\astra-remaining-improvements\stage\01e135926859\node_modules\@playwright\test\cli.js test
+[2m[WebServer] [22m(node:35532) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+[2m[WebServer] [22m(node:11892) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+(node:33412) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:33412) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:20196) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:20196) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)

@@ -1,0 +1,22 @@
+# Verification scope and reproducible checks
+
+The project is verified as a local learning application with synthetic users, organizations, projects, and tasks. The helper starts its own PostgreSQL cluster on loopback, uses a marked test database, and stops that cluster before deleting its temporary directory. It does not migrate or clear the user's configured application database. Personal environment values, live accounts, and external messages are outside these fixtures.
+
+The completed implementation review passed **55 checks: 36 backend, six frontend, three local setup, and ten Chromium scenarios**. Both production builds and type checks passed. The helper confirmed PostgreSQL shutdown and removed its owned temporary cluster. Desktop and narrow screenshots were reviewed at 1440 and 390 pixels.
+
+Run `npm test` to reproduce backend and frontend checks. Backend validation and policy tests cover normalized editable values, unknown fields, lengths, statuses, version bounds, query shapes, password bytes, and manager roles. PostgreSQL/HTTP integration scenarios cover login, token expiry, membership and role changes, selected-tenant isolation, task-parent constraints, create/update/delete behavior, concurrent writers, audit rollback, deletion dependencies, search, pagination, request limits, and non-overwriting seed behavior. Frontend tests cover request headers, cancellation, readable errors, empty results, and query-failure presentation.
+
+Run `npm run verify` to include builds and real Chromium scenarios. The browser suite exercises organization switching, token memory, project CRUD, member task permissions, task CRUD, project/task conflicts, draft export and reconciliation, unsaved-transition confirmation, failed writes, failed refreshes, referenced deletion, literal HTML rendering, and desktop/narrow layouts. JSON reports are written to `.verification`; screenshot artifacts are [desktop](images/desktop.png) and [narrow](images/narrow.png). Read the actual report counts before making a completion claim.
+
+The local setup script has separate regression checks for generated multiline credentials, refusing existing files, and removing only its own newly created file if a later write fails. It never prints generated password values. The seed preserves existing demo identities and edits rather than resetting them on every run. The root helper also repeats the seed as a compatibility check.
+
+The tested toolchain uses Node 22.16.0, Prisma 6.19.2, PostgreSQL 18, TypeScript, React 18, Vite, Vitest, and Playwright Chromium. The root lockfile records the resolved packages. Docker Compose is supplied for a local PostgreSQL service, while automated verification uses installed PostgreSQL binaries. Its configuration does not establish that a Docker daemon was exercised.
+
+Limits remain explicit. Tokens expire after thirty minutes and have no refresh or server-side session revocation mechanism. Membership is checked for each request; the project does not claim atomic revocation against an already in-flight operation. Login throttling is bounded and process-local. There is no account invitation UI, MFA, row-level security policy, distributed rate limiter, production deployment, or durable create idempotency. Project audits expose minimal metadata; task audits are stored but have no dedicated UI. Draft export does not automatically import or merge work.
+
+The migration targets a fresh dedicated database, not an unknown existing deployment. Power-loss behavior, complete accessibility coverage, production performance, and external notification delivery were not certified. Keep future practice features distinct from implemented guarantees, and update this document with observed evidence when extending the project.
+
+## Which run the numbers refer to
+
+The delivery left several evidence directories (`browser-first, final, first, second, verified`; copies of the JSON summaries and test logs are in `astraupskill/evidence/`). They are attempts, in order: `first` and `second` are the initial backend/frontend runs; the frontend failed two tests in an early run (`frontend-fixed.json` is the rerun after the fix); `browser-first` is the first Playwright pass; `final` and **`verified`** are the complete reruns. **`verified/` is the run the 55-check figure refers to.** Read `evidence/verified/backend.json` and `frontend.json` for the per-test list, and `evidence/results.json` for the roll-up. If your own rerun differs, compare against `verified/`, not against the earlier attempts.
+

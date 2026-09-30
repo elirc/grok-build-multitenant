@@ -1,29 +1,65 @@
-// =============================================================================
-// TENANT CONTEXT MIDDLEWARE
-// =============================================================================
-//
-// In a real multi-tenant app, this middleware would:
-// 1. Extract user from JWT
-// 2. Determine the current organization (from header, body, or user's default)
-// 3. Attach it to req for downstream use
-//
-// This is one of the most critical pieces for SaaS security.
-// =============================================================================
+import { Request, Response, NextFunction } from "express";
+import { Role } from "@prisma/client";
+import { prisma } from "../lib/prisma";
+import { AppError } from "../lib/errors";
+import { identity } from "../lib/validation";
 
-import { Request, Response, NextFunction } from 'express';
-
-export function attachTenantContext(req: Request, res: Response, next: NextFunction) {
-  // In production: decode JWT and set current org
-  // For learning/demo:
-  req.currentOrgId = (req.headers['x-org-id'] as string) || 'demo-org';
-  next();
+export type TenantContext = {
+  userId: string;
+  organizationId: string;
+  role: Role;
+};
+export async function attachTenantContext(
+  req: Request,
+  _res: Response,
+  next: NextFunction,
+) {
+  try {
+    if (!req.userId) throw new AppError(401, "Sign in to continue.");
+    const parsed = identity.safeParse(req.headers["x-org-id"]);
+    if (!parsed.success)
+      throw new AppError(
+        400,
+        "Select an organization using the x-org-id header.",
+      );
+    const membership = await prisma.organizationMember.findUnique({
+      where: {
+        userId_organizationId: {
+          userId: req.userId,
+          organizationId: parsed.data,
+        },
+      },
+    });
+    if (!membership)
+      throw new AppError(403, "You are not a member of that organization.");
+    req.tenant = {
+      userId: req.userId,
+      organizationId: parsed.data,
+      role: membership.role,
+    };
+    next();
+  } catch (error) {
+    next(error);
+  }
 }
-
-// Extend Express Request type
+export function requireTenant(req: Request): TenantContext {
+  if (!req.tenant)
+    throw new AppError(401, "Verified organization membership is required.");
+  return req.tenant;
+}
+export function requireManager(context: TenantContext) {
+  if (!["OWNER", "ADMIN"].includes(context.role))
+    throw new AppError(
+      403,
+      "An owner or administrator must change projects. Members can manage tasks.",
+    );
+}
 declare global {
   namespace Express {
     interface Request {
-      currentOrgId?: string;
+      userId?: string;
+      tenant?: TenantContext;
+      requestId: string;
     }
   }
 }

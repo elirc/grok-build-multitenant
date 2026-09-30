@@ -1,0 +1,11 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+const subject = await import(process.argv.includes('--reference') ? '../_answers/reference.mjs' : './exercise.mjs');
+const {parseListQuery:p}=subject;
+test('defaults only for absent fields',()=>assert.deepEqual(p({}),{q:'',page:1,pageSize:20}));
+test('normalization and inclusive upper bounds',()=>assert.deepEqual(p({q:'  alpha  ',page:'10000',pageSize:'100'}),{q:'alpha',page:10000,pageSize:100}));
+test('leading zeros are explicitly accepted',()=>assert.equal(p({page:'0002'}).page,2));
+test('invalid numeric forms are rejected',()=>{for(const page of ['', '0','-1','1.5','1x',' 1',1,['1'],'10001','9007199254740993']) assert.throws(()=>p({page}),TypeError,String(page));});
+test('page size has its own bounds',()=>{assert.equal(p({pageSize:'1'}).pageSize,1);assert.throws(()=>p({pageSize:'101'}),TypeError);});
+test('outer shape and q type/length are checked',()=>{for(const x of [null,[],1,'x'])assert.throws(()=>p(x),TypeError);assert.throws(()=>p({q:[]}),TypeError);assert.throws(()=>p({q:'a'.repeat(81)}),TypeError);});
+test('input is not mutated and untrusted extras do not enter output',()=>{const x=Object.freeze({q:' x ',organizationId:'other'});assert.deepEqual(p(x),{q:'x',page:1,pageSize:20});});

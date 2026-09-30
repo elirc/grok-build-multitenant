@@ -1,78 +1,60 @@
-# grokbuildmultitenantproject
+# Tenant Workspace
 
-A full-stack Multi-Tenant SaaS Starter built for educational purposes to upskill to mid/senior SWE level.
+A local React, Express, TypeScript, Prisma, and PostgreSQL application for learning reliable multi-tenant CRUD. The original starter's trusted tenant header and placeholder pages have been replaced with verified membership, project and task CRUD, role checks, version conflicts, and transactional audit history.
 
-## Overview
+Start the [detailed learning course](astraupskill/README.md) for source maps, worked examples, debugging labs, exercises, and review criteria.
 
-This project simulates a multi-tenant application (like many modern SaaS tools) where data is strictly isolated between "Organizations" (tenants).
+## Run locally
 
-**Goal**: Teach advanced concepts like tenant isolation, role-based access per tenant, clean architecture, scalable API design, and React patterns in a realistic fullstack setup using JS/React/Node/TypeScript/Postgres.
+Use Node 22 and npm. PostgreSQL can run through Docker Compose or an existing local installation. The application binds its API and frontend to loopback.
 
-## Tech Stack
-
-**Backend**
-- Node.js + TypeScript
-- Express.js
-- Prisma ORM + PostgreSQL
-- Zod for validation
-- JWT authentication with tenant context
-
-**Frontend**
-- React + TypeScript (Vite)
-- TanStack Query
-- React Hook Form + Zod
-- Tailwind CSS
-- React Router
-
-## Domain
-
-- **Organizations** (Tenants) - e.g., companies using the SaaS
-- **Users** - belong to one or more Organizations with roles
-- **Projects** - scoped strictly to an Organization
-- **Tasks** - scoped to Projects
-
-Key multi-tenant patterns:
-- Every query filters by current organization
-- Authorization checks tenant membership + role
-- No data leakage between tenants
-
-## Structure
-
-```
-grokbuildmultitenantproject/
-├── backend/                 # Node/TS/Express/Prisma
-│   ├── src/
-│   │   ├── routes/
-│   │   ├── controllers/
-│   │   ├── services/
-│   │   ├── repositories/
-│   │   ├── middleware/
-│   │   └── types/
-│   └── prisma/
-├── frontend/                # React/TS/Vite
-│   └── src/
-│       ├── features/
-│       ├── components/
-│       ├── hooks/
-│       ├── api/
-│       └── lib/
-├── docker-compose.yml
-├── JOURNAL.md
-├── PHASE_PLANS.md
-└── README.md
+```powershell
+npm ci
+npm run setup:local
+docker compose up -d
+npm run db:generate
+npm run db:deploy
+npm run build
+npm run seed --workspace backend
 ```
 
-## How to Use for Upskilling
+Setup creates root `.env` and `backend/.env` with generated credentials, and refuses to overwrite either existing file. Review `backend/.env` locally to obtain `DEMO_PASSWORD`. Do not commit those files. If you already have a database, configure `backend/.env` from its example instead and use an empty dedicated database. The migration is a fresh schema, not an automatic upgrade of unknown existing data.
 
-1. Read **JOURNAL.md** first for the thought process.
-2. Read **PHASE_PLANS.md** for the roadmap.
-3. Explore code with comments explaining architecture, decisions, and interactions.
+Start two terminals from the repository root:
 
-This project emphasizes:
-- Multi-tenancy isolation (critical for SaaS)
-- Proper API design with tenant scoping
-- Layered architecture
-- Frontend patterns with server state management
-- Testing and maintainability
+```powershell
+npm run dev --workspace backend
+npm run dev --workspace frontend
+```
 
-All content is heavily commented for learning.
+Open `http://127.0.0.1:5173`. The frontend proxies `/api` to `http://127.0.0.1:4000`. `FRONTEND_URL` must match the browser origin exactly. Vite uses a strict port so it will not silently move to an origin the API rejects. If using another local port, update `WEB_PORT`, `API_PROXY_TARGET`, `PORT`, and `FRONTEND_URL` consistently.
+
+The seed creates fictional accounts sharing the generated demo password:
+
+| Account | Cedar Studio | Maple Works |
+|---|---|---|
+| `owner@example.test` | Owner | Member |
+| `member@example.test` | Member | No access |
+| `outsider@example.test` | No access | Owner |
+
+Owners and admins manage projects. Every member can manage tasks within authorized projects. The seed preserves existing identities, passwords, and edits on repeat; it rejects partial fixture identities for manual review. It requires explicit `ALLOW_DEMO_SEED=yes`. These are local demonstration accounts, not a production account-management flow.
+
+## Editing behavior
+
+Project and task editors hold the version they loaded. A stale save or delete returns a conflict and preserves input. Export drafts before loading current values. Tenant switching and sign-out require confirmation when work is unsaved. Tokens remain in tab memory and expire after thirty minutes; refreshing signs out. Re-sign-in and manually reconcile an exported draft if a session expires.
+
+Projects containing tasks cannot be deleted until their tasks are explicitly removed. Audits retain minimal action metadata after deletion. Project audit is visible in the UI; task audit metadata is stored in PostgreSQL. Search is bounded, literal, and paginated at twenty records. New creates do not have idempotency keys, so inspect current records before retrying an uncertain timeout.
+
+## Verification
+
+The repeatable helper creates its own temporary PostgreSQL cluster, applies migrations, runs checks, and stops/removes that cluster. It does not use your configured application database. Install PostgreSQL binaries and set `POSTGRES_BIN` to their directory if it differs from the Windows default `C:\Program Files\PostgreSQL\18\bin` or is not on PATH on another platform.
+
+```powershell
+npx playwright install chromium
+npm test
+npm run verify
+```
+
+`npm test` runs backend and frontend checks using the temporary database. `npm run verify` also builds both applications, seeds twice, drives Chromium, and creates desktop/narrow screenshots. Reports go to `.verification`. `npm run test:browser` reruns the browser checks with a new temporary database. Individual backend tests deliberately refuse an unmarked database.
+
+Use a PostgreSQL backup/restore workflow before changing a real schema. The local setup and tests do not establish production hosting, refresh tokens, MFA, account invitations, row-level security, distributed rate limiting, or durable create idempotency. Docker Compose configuration is provided; the actual verification uses installed PostgreSQL binaries. See [measured verification scope](astraupskill/VERIFICATION.md).

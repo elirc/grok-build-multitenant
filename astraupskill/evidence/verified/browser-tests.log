@@ -1,0 +1,23 @@
+
+Running 10 tests using 1 worker
+
+  ok  1 browser-tests\workspace.spec.mjs:55:1 › organization changes keep only the selected workspace and tokens stay in memory (4.6s)
+  ok  2 browser-tests\workspace.spec.mjs:81:1 › project CRUD keeps identity and confirms deletion (4.0s)
+  ok  3 browser-tests\workspace.spec.mjs:125:1 › members can manage tasks but do not receive project mutation controls (5.0s)
+  ok  4 browser-tests\workspace.spec.mjs:155:1 › two project editors preserve the stale draft and export its baseline (9.6s)
+  ok  5 browser-tests\workspace.spec.mjs:199:1 › two task editors cannot overwrite the accepted task (8.0s)
+  ok  6 browser-tests\workspace.spec.mjs:246:1 › tenant switching and sign-out require explicit draft discard (3.6s)
+  ok  7 browser-tests\workspace.spec.mjs:277:1 › failed saves preserve input and successful saves remain accepted after refresh failure (3.6s)
+  ok  8 browser-tests\workspace.spec.mjs:310:1 › project deletion with tasks explains the required explicit cleanup (4.2s)
+  ok  9 browser-tests\workspace.spec.mjs:330:1 › literal project titles and search do not inject HTML (2.7s)
+  ok 10 browser-tests\workspace.spec.mjs:345:1 › desktop and narrow project/task layouts remain readable (4.4s)
+
+  10 passed (1.2m)
+[2m[WebServer] [22m(node:32696) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+[2m[WebServer] [22m(node:29288) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+(node:10800) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:10800) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)

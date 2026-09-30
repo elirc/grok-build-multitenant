@@ -1,3 +1,5 @@
+> Historical starter notes. The implemented behavior, setup, and current learning path are documented in [README.md](README.md) and [astraupskill](astraupskill/README.md). Planned features below are not completion claims.
+
 # PHASE PLANS - grokbuildmultitenantproject
 
 This document provides a phased roadmap for building and extending this Multi-Tenant SaaS starter.

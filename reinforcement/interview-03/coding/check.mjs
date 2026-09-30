@@ -1,0 +1,11 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+const subject = await import(process.argv.includes('--reference') ? '../_interviewer/reference.mjs' : './exercise.mjs');
+const {effectiveCapabilities:f}=subject;
+test('known grants survive',()=>assert.deepEqual(f(['write','read'],[]),['read','write']));
+test('explicit denial removes a grant',()=>assert.deepEqual(f(['read','write'],['write']),['read']));
+test('duplicates do not duplicate capability',()=>assert.deepEqual(f(['read','read'],[]),['read']));
+test('unknown tokens fail closed',()=>assert.deepEqual(f(['root','*','__proto__'],[]),[]));
+test('case remains significant',()=>assert.deepEqual(f(['READ','read'],['READ']),['read']));
+test('empty input has no capability',()=>assert.deepEqual(f([],['read']),[]));
+test('inputs remain unchanged and result order is stable',()=>{const grants=Object.freeze(['write','admin','read']);assert.deepEqual(f(grants,Object.freeze([])),['admin','read','write']);assert.equal(grants[0],'write');});
