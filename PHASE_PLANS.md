@@ -17,6 +17,8 @@ The focus is on concepts that matter at mid-to-senior level: tenant isolation, c
 
 **Goal of current state**: Understand the skeleton and multi-tenancy mindset.
 
+> **Status (2026-10-06, verified against code):** Superseded by the implemented application described in README.md.
+
 ---
 
 ## Phase 1: Authentication + Tenant Context
@@ -48,6 +50,8 @@ The focus is on concepts that matter at mid-to-senior level: tenant isolation, c
 - Tenant context propagation
 - Never trust client for tenant scoping
 - How auth affects almost every layer
+
+> **Status (2026-10-06):** Shipped with a different design. Membership is the `OrganizationMember` model with a role. The JWT carries only the user id (`backend/src/middleware/auth.ts:19-27`); the organization is chosen per request by the `x-org-id` header and verified against a membership row on every request (`middleware/tenantContext.ts:12-44`), so there is no `activeOrganizationId` in the token. Only login exists (`auth.ts:79`); there is no registration route or page. The frontend keeps the token in memory, not storage.
 
 ---
 
@@ -83,6 +87,8 @@ const projects = await prisma.project.findMany({
 });
 ```
 
+> **Status (2026-10-06):** Shipped. Every repository query carries the organization predicate (`backend/src/repositories/projectRepository.ts`), tasks reference projects through a composite `[projectId, organizationId]` foreign key (`prisma/schema.prisma:66`), OWNER/ADMIN gate project writes while members manage tasks (`tenantContext.ts:50-56`), and React Query keys start with user and organization (`frontend/src/features/projects/pages/ProjectsPage.tsx:33`).
+
 ---
 
 ## Phase 3: Advanced API Design
@@ -112,6 +118,8 @@ const projects = await prisma.project.findMany({
 - Preventing over-fetching
 - Good developer experience for API consumers
 
+> **Status (2026-10-06):** Partly shipped. Lists take `q` and `page` with a fixed page size of 20 (offset pagination), tasks also filter by `status` (`backend/src/lib/validation.ts:28-50`), and errors go through one handler (`lib/errors.ts`). Not built: sorting, cursor pagination, OpenAPI/Swagger, URL-synced filters, and optimistic updates.
+
 ---
 
 ## Phase 4: Testing Strategy
@@ -136,6 +144,8 @@ Build confidence through tests, especially around isolation.
 - Testing tenant isolation is non-negotiable in SaaS
 - Write tests that would catch security bugs
 
+> **Status (2026-10-06):** Shipped without MSW. 24 PostgreSQL/HTTP integration tests (`backend/src/__tests__/projectRepository.test.ts`) cover cross-tenant reads and writes, revocation, and role changes; 12 contract tests run without a database; 4 middleware tests mock Prisma (`tenantContext.test.ts`). The 6 frontend tests stub `fetch` directly, and 10 Playwright scenarios include organization switching (`browser-tests/workspace.spec.mjs:59`).
+
 ---
 
 ## Phase 5: Advanced Multi-Tenant Features
@@ -153,6 +163,8 @@ Build confidence through tests, especially around isolation.
 - Add caching with tenant awareness (Redis)
 - Consider row-level security (RLS) in Postgres as an additional safety layer
 - Better separation of public API vs internal admin endpoints
+
+> **Status (2026-10-06):** Multi-organization membership with switching and transactional audit events shipped. Invites, soft deletes, billing, usage metrics, domain events, Redis caching, and row-level security were not built.
 
 ---
 

@@ -1,6 +1,6 @@
 # 12. Reading integration tests as evidence
 
-[Course index](README.md) · [Worked review](answers/03-server-evidence.md)
+[Course index](README.md) · No worked review has been written for lessons 10-12 yet; compare your answers with the cited source and tests instead.
 
 Primary source: [projectRepository.test.ts](../../backend/src/__tests__/projectRepository.test.ts). Despite its filename, this file exercises real PostgreSQL and HTTP behavior through the application. Learning to identify the actual test boundary is more useful than inferring it from a directory or filename.
 

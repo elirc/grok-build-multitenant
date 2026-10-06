@@ -27,11 +27,10 @@ Everything else in this chapter is the same idea at a larger boundary.
 
 ## Break it: turn the premise into a measurement
 
-Open `backend/src/middleware/tenantContext.ts` and replace the membership lookup with the delivered fallback from `astraupskill/snapshots/tenantContext-before.ts.txt`:
+The starter's middleware is in `astraupskill/snapshots/tenantContext-before.ts.txt`: it set `req.currentOrgId` from the header or fell back to `"demo-org"`. Pasting it back will not compile against today's services, which read `req.tenant`, and the helper runs `tsc` before any test. Reproduce its *behavior* instead: in `backend/src/middleware/tenantContext.ts`, replace the membership lookup and its 403 (lines 25-34) with a fake membership, so line 35 becomes
 
 ```ts
-req.currentOrgId = (req.headers["x-org-id"] as string) || "demo-org";
+req.tenant = { userId: req.userId, organizationId: parsed.data, role: "OWNER" };
 ```
 
-(plus the matching `req.currentOrgId || 'demo-org'` reads in `projectController-before.ts.txt`). Rerun `npx vitest run`. Predict first which of the 24 integration tests turn red: every cross-tenant read test (a forged header now *selects* a tenant instead of being checked) and every "no header" test (the fallback silently picks `demo-org`). Write the actual count in your notes, then restore the file. The difference between your prediction and the count is the part of the lesson you had not yet internalized.
-
+Run `npm run test:api` from the repository root (running `npx vitest run` inside `backend/` would also start the integration file, whose fixture guard refuses any database the helper did not create). Before running, predict which tests turn red. Candidates worth examining: "requires an explicit organization header and verified membership" (`projectRepository.test.ts:142`; its 400 half still passes, its 403 half should not), "removes access after membership revocation" (`:154`), "reads changed roles from membership for every request" (`:246`), "forbids member project mutations" (`:204`), and the `tenantContext.test.ts` cases at lines 29, 37, and 47 (only the no-header case at line 22 survives). Write your predicted list, then the actual list, and restore with `git checkout -- backend/src/middleware/tenantContext.ts`. The difference between the lists is the part of the lesson you had not yet internalized.

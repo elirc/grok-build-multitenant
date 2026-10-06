@@ -1,6 +1,6 @@
 # grokbuildmultitenantproject: extended upskilling course
 
-Source-grounded lessons, worked reviews, failure schedules, and capstones. This course is being expanded; the organizer progress record gives its current measured status.
+Source-grounded lessons, worked reviews, and a runnable lab. Status as of 2026-10-06: 12 lessons, worked reviews for lessons 1-9 only.
 
 Read the lessons in order, write your own answers, then use the separate review guides. Source-reading findings are distinguished from proposed changes and unexecuted integration exercises.
 
@@ -15,10 +15,14 @@ Read the lessons in order, write your own answers, then use the separate review 
 - [07. Editor baselines and conflict recovery](07-editor-baselines-and-conflict-recovery.md)
 - [08. Cache identity and organization switching](08-cache-identity-and-organization-switching.md)
 - [09. Transport uncertainty and draft evidence](09-transport-uncertainty-and-draft-evidence.md)
+- [10. Authentication and membership freshness](10-authentication-and-membership-freshness.md)
+- [11. Request boundaries and error contracts](11-request-boundaries-and-error-contracts.md)
+- [12. Reading integration tests as evidence](12-reading-integration-tests-as-evidence.md)
 
 ## Worked reviews
 
-- [01-foundations](answers/01-foundations.md)
+- [01-foundations](answers/01-foundations.md) (lessons 1-6)
+- [02-browser-boundaries](answers/02-browser-boundaries.md) (lessons 7-9)
 
 ## Runnable lab
 

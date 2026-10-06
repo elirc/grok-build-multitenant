@@ -1,6 +1,6 @@
 # 10. Authentication and membership freshness
 
-[Course index](README.md) · [Worked review](answers/03-server-evidence.md)
+[Course index](README.md) · No worked review has been written for lessons 10-12 yet; compare your answers with the cited source and tests instead.
 
 Sources: [authentication middleware](../../backend/src/middleware/auth.ts), [tenant context](../../backend/src/middleware/tenantContext.ts), and [HTTP integration tests](../../backend/src/__tests__/projectRepository.test.ts). The central question is where each part of authority comes from and how recently it was checked.
 

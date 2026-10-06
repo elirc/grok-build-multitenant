@@ -1,6 +1,6 @@
 # 11. Request boundaries and error contracts
 
-[Course index](README.md) · [Worked review](answers/03-server-evidence.md)
+[Course index](README.md) · No worked review has been written for lessons 10-12 yet; compare your answers with the cited source and tests instead.
 
 Sources: [application setup](../../backend/src/app.ts), [project routes](../../backend/src/routes/projectRoutes.ts), [validation](../../backend/src/lib/validation.ts), and [error handler](../../backend/src/lib/errors.ts). This chapter asks how malformed requests become understandable failures without being mistaken for accepted work.
 

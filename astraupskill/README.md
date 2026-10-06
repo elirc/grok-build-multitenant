@@ -6,7 +6,7 @@ Your goal is to explain why a request is allowed, which rows it can affect, and 
 
 ## Prerequisites and glossary
 
-**Prerequisites:** React state and forms; HTTP headers and status codes; enough Prisma to read a `where` clause and a transaction; the habit of checking the row, not the screen. The `buildjira` course here is a natural predecessor.
+**Prerequisites:** React state and forms; HTTP headers and status codes; enough Prisma to read a `where` clause and a transaction; the habit of checking the row, not the screen.
 
 | term | meaning | where in this project |
 | --- | --- | --- |
